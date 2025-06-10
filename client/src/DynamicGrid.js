@@ -18,7 +18,7 @@ export default class DynamicGrid {
       drawGrid(p5, transformMatrix) {
         const scaleX = transformMatrix.m[0][0];
         const scaleY = transformMatrix.m[1][1];
-        const gridSize = this.getAdjustedGridSize(scaleX/0.7, 40, 800, this.baseGridSize);
+        const gridSize = this.getAdjustedGridSize(scaleX/0.9, 40, 800, this.baseGridSize);
         const subDivisions = 10;
         const subGridSize = gridSize / subDivisions;
       
@@ -158,22 +158,32 @@ export default class DynamicGrid {
         p5.pop();
       }
 
+      formNumber(cm) {
+        const absVal = Math.abs(cm);
+      
+        let value, unit;
+      
+        if (absVal < 0.1) {
+          value = cm * 10; // to mm
+          unit = "mm";
+          value = value.toFixed(1);
+        } else if (absVal < 100) {
+          value = cm;
+          unit = "cm";
+          value = value.toFixed(1);
+        } else if (absVal < 100000) {
+          value = cm / 100; // to meters
+          unit = "m";
+          value = value.toFixed(2);
+        } else {
+          value = cm / 100000; // to km
+          unit = "km";
+          value = value.toFixed(3);
+        }
+      
+        return `${value} ${unit}`;
+      }
 
-      formNumber(num) {
-        if (num > 100000 || num < - 100000) {
-          num = Number(num).toExponential(1);
-        }
-        if ((num >=1 && num <= 100000) || (num <= -1 && num >= -100000)) {
-          num = Number(num).toFixed(1);
-        }
-        if ((num < 1 && num > 0.001) || (num > -1 && num < -0.001)) {
-          num = Number(num).toFixed(3);
-        }
-        if ((num <= 0.001 && num > 0.0) || (num >= -0.001 && num < 0.0) ) {
-          num = Number(num).toExponential(1);
-        }
-        return num;
-     }
       
   }
   

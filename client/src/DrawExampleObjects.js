@@ -9,13 +9,13 @@ export default class DrawExampleObjects {
   
       // Example objects
       p5.fill(0, 0, 255, 150);
-      p5.rect(50, 50, 100, 100);
+      p5.rect(0, 0, 10, 10);      // cm
   
       p5.fill(0, 64, 128, 150);
-      p5.rect(50, 50, 200, 200);
+      p5.rect(0, 0, 1*100, 1*100);  // m  
   
       p5.fill(0, 128, 255, 150);
-      p5.rect(50, 50, 300, 300);
+      p5.rect(0, 0, 1*100*1000, 1*100*1000); // km
     }
   
     drawBaseObjects2(p5) {

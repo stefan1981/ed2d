@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import Canvas from "./Canvas";
 import ControlPanel from "./ControlPanel";
-import "./App.css"; // <-- import the CSS
+import "./App.css";
 
 export default function App() {
   const [offset, setOffset] = useState({ x: 0, y: 0 });
@@ -13,37 +13,34 @@ export default function App() {
   useEffect(() => {
     scaleRef.current = scale;
   }, [scale]);
-  
-  
+
   // Center once canvasSize is available and we have not centered yet
   useEffect(() => {
     if (canvasSize && !hasCentered) {
       setOffset({ x: canvasSize.width / 2, y: canvasSize.height / 2 });
-      setHasCentered(true); // prevent repeated centering
+      setHasCentered(true);
     }
   }, [canvasSize, hasCentered]);
 
   const centerOffset = () => {
     if (canvasSize) {
-        setOffset({ x: canvasSize.width / 2, y: canvasSize.height / 2 });
+      setOffset({ x: canvasSize.width / 2, y: canvasSize.height / 2 });
     }
   };
+
   const topLeftOffset = () => {
     if (canvasSize) {
-        setOffset({ x: 0, y: 0 });
+      setOffset({ x: 0, y: 0 });
     }
   };
 
   const resetScale = (factor = 0) => {
-    // Einfach den Scale-State zurücksetzen:
     if (factor === 0) {
       setScale(1);
     } else {
       setScale(scale * factor);
     }
   };
-
-
 
   return (
     <div className="app">
@@ -56,18 +53,19 @@ export default function App() {
           <Canvas
             offset={offset}
             setOffset={setOffset}
-            scale={scale}  
+            scale={scale}
             setScale={setScale}
             scaleRef={scaleRef}
             setCanvasSize={setCanvasSize}
           />
         </div>
 
-        <div>
+        <div className="control-panel-container">
           <ControlPanel
             offset={offset}
             scale={scale}
-            // canvasSize={canvasSize}
+            setOffset={setOffset}
+            setScale={setScale}
             centerOffset={centerOffset}
             topLeftOffset={topLeftOffset}
             resetScale={resetScale}
