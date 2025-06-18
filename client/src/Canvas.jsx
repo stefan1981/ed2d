@@ -11,6 +11,8 @@ export default function Canvas({ offset, setOffset, scale, setScale, scaleRef, s
   const gridRef = useRef(new DynamicGrid());
   const drawBaseObjectsRef = useRef(new DrawBaseObjects());
 
+  let xm = 0;
+
   // MouseController bekommt offsetRef, transformRef, scaleRef und setState Funktionen
   const mouseControllerRef = useRef(
     new MouseController({ offsetRef, transformRef, scaleRef, setOffset, setScale })
@@ -48,28 +50,83 @@ export default function Canvas({ offset, setOffset, scale, setScale, scaleRef, s
     mouseControllerRef.current.setScaleValue(scale);
   }, [scale]);
 
+
+  const drawSpindleLine = (p5, x, y, sWidth, spindles) => {
+    const sDiameter = 5.5;
+    const sWidthHalf = sWidth / 2;
+    for (let i = 0; i < spindles; i++) {
+      p5.stroke(0);
+      p5.strokeWeight(0.1);
+      p5.fill(200, 200, 200);
+      p5.rect(x + i * sWidth, y, sWidth, sWidth);
+      p5.fill('#ffffff');
+      p5.circle(x + i * sWidth + sWidthHalf, y+sWidthHalf, sDiameter);
+    }
+  }
+
+  const drawMachine = (p5, x, y) =>{
+    const machineWidth = 51.0;
+    const nrOfSpindles = 720;
+    const sWidth = 7.0;
+    
+    // head stock
+    //p5.stroke(0);
+    //p5.strokeWeight(0);
+    p5.fill('#00868B');
+    p5.rect(x+0, y+0, 73.5, machineWidth);
+    p5.fill('#888888');    
+    p5.rect(x+73.5, y+0, 20, machineWidth);
+
+    // spindles
+    p5.fill('#cccccc');
+    p5.rect(x+93.5, y+0, (nrOfSpindles*sWidth), machineWidth);
+
+    drawSpindleLine(p5, x+93.5, y+0, sWidth, nrOfSpindles);
+    drawSpindleLine(p5, x+93.5, y+machineWidth-7, sWidth, nrOfSpindles);
+
+    // end stock
+    //p5.stroke(0);
+    //p5.strokeWeight(0);
+    p5.fill('#00868B');
+    p5.rect(x+93.5+(nrOfSpindles*sWidth), y, (70+117+28.4+30.2), machineWidth);
+
+  }
+
   // p5 draw loop
   const draw = (p5) => {
-    console.log("Drawing canvas...");
     p5.background(240);
-    p5.push();
 
+    p5.noStroke()
+
+    p5.push();
     const m = transformRef.current.m;
     p5.applyMatrix(m[0][0], m[1][0], m[0][1], m[1][1], m[0][2], m[1][2]);
 
-    gridRef.current.drawGrid(p5, transformRef.current);
-    drawBaseObjectsRef.current.drawBaseObjects(p5);
+    //xm += 0.1; // Beispiel für eine Variable, die sich ändert
+    xm += 100 * (p5.deltaTime / 1000);
+
+    // mover
+    p5.fill('#ff0000');
+    p5.circle(0+xm, 100, 40);
+
+    // maschines
+    for (let i = 0; i < 15; i++) {
+      drawMachine(p5, 0, i * 200);
+    }
+
+    // grid
+    //gridRef.current.drawGrid(p5, transformRef.current);
 
     p5.pop();
 
     // Falls sich offset intern im MouseController ändert, update App-Offset
-    const currentOffset = offsetRef.current;
-    setOffset(prev => {
-      if (prev.x !== currentOffset.x || prev.y !== currentOffset.y) {
-        return { ...currentOffset };
-      }
-      return prev;
-    });
+    // const currentOffset = offsetRef.current;
+    // setOffset(prev => {
+    //   if (prev.x !== currentOffset.x || prev.y !== currentOffset.y) {
+    //     return { ...currentOffset };
+    //   }
+    //   return prev;
+    // });
   };
 
   // Fenstergröße-Änderung behandeln
